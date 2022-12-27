@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "409414155696",
+    "firebase_url": "https://login-page-db-pmsf-default-rtdb.firebaseio.com",
+    "project_id": "login-page-db-pmsf",
+    "storage_bucket": "login-page-db-pmsf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409414155696:android:1b2dd2926a0fc0733baa75",
+        "android_client_info": {
+          "package_name": "com.example.login_page"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409414155696-hplp5p1jepde00gj7vig07edkqnuvqht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyDrt75udggJGUEMbG5r9Yp6PxMdcAQ1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409414155696-hplp5p1jepde00gj7vig07edkqnuvqht.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "409414155696-4r82sb97otkjig8h5h5afhflrn1dolv5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.loginPagePmsf"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409414155696:android:cb5d7a3fb715eec93baa75",
+        "android_client_info": {
+          "package_name": "com.example.login_page_pmsf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409414155696-hplp5p1jepde00gj7vig07edkqnuvqht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyDrt75udggJGUEMbG5r9Yp6PxMdcAQ1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409414155696-hplp5p1jepde00gj7vig07edkqnuvqht.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "409414155696-4r82sb97otkjig8h5h5afhflrn1dolv5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.loginPagePmsf"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
