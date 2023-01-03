@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login_page_pmsf/login_page.dart';
-import 'package:login_page_pmsf/home_page.dart';
+import 'package:login_page_pmsf/authentication/auth_page.dart';
+import 'package:login_page_pmsf/pages/home_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -16,7 +16,7 @@ class MainPage extends StatelessWidget {
             return const HomePage();
           }
           else {
-            return const LoginPage();
+            return const AuthPage();
           }
         },
       ),

@@ -5,7 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:validatorless/validatorless.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final VoidCallback showRegisterPage;
+  const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
 
   @override 
   State<LoginPage> createState() => _LoginPageState();
@@ -43,9 +44,10 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.login_outlined,
-                size: 100,
+              SizedBox(
+                width: 100,
+                height: 140,
+                child: Image.asset('assets/logologin_page.png'),
               ),
             
             SizedBox(height: 10),
@@ -186,12 +188,15 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                ' Crie uma conta!',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                )
+              GestureDetector(
+                onTap: widget.showRegisterPage,
+                child: Text(
+                  ' Crie uma conta!',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  )
+                ),
               ),
             ]
           ,)
