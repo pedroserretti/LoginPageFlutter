@@ -24,7 +24,26 @@ class _RegisterPageState extends State<RegisterPage> {
     await showBarModalBottomSheet(context: context, builder: (context) => HomeModalAdd());
   }
 
-  Future signUp() async {}
+  Future signUp() async {
+    if (passwordConfirmed()) {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: _controladorEmail.text.trim(), 
+      password: _controladorSenha.text.trim(),
+    );
+    }
+    if (isChecked != true) {
+      return RegisterPage(showLoginPage: () { });
+    }
+  }
+
+  bool passwordConfirmed() {
+    if (_controladorSenha.text.trim() == _controladorConfirmarSenha.text.trim()){
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   
   @override
   void dispose() {

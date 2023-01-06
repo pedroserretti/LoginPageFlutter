@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:login_page_pmsf/authentication/main_page.dart';
 import 'package:validatorless/validatorless.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final _controladorEmail = TextEditingController();
   final _controladorSenha = TextEditingController();
 
-  Future singIn() async {
+    Future singIn() async {
 
     var formValid = _formKey.currentState?.validate() ?? false;
     if (formValid){
