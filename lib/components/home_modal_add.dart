@@ -14,6 +14,7 @@ class _HomeModalAddState extends State<HomeModalAdd> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
+      child: SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
@@ -33,6 +34,7 @@ class _HomeModalAddState extends State<HomeModalAdd> {
           ),
         ]),
       ),
+    )
     );
   }
 }
