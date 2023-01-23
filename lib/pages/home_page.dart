@@ -5,20 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required Null Function() showLoginPage}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  
+  Future signOut() async => await FirebaseAuth.instance.signOut();
+  final user = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
-
-    final user = FirebaseAuth.instance.currentUser!;
-
-    Future signOut() => FirebaseAuth.instance.signOut();
-
     return Scaffold(
       body: Center(
         child: Column(
@@ -32,6 +31,7 @@ class _HomePageState extends State<HomePage> {
             ),
           
             const SizedBox(height: 20),
+
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),

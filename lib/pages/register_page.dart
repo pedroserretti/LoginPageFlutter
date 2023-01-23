@@ -1,14 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page_pmsf/components/home_modal_add.dart.';
+import 'package:login_page_pmsf/pages/home_page.dart';
 import 'package:login_page_pmsf/pages/login_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:validatorless/validatorless.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showLoginPage;
@@ -20,6 +19,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   bool acceptTerms = false;
+  final GlobalKey<FormState> _formKey = GlobalKey();
   final _controladorEmail = TextEditingController();
   final _controladorSenha = TextEditingController();
   final _controladorConfirmarSenha = TextEditingController();
@@ -29,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
     Navigator.push(
       context,
       PageTransition(
-        child: LoginPage(showRegisterPage: () {}),
+        child: LoginPage(showHomePage: () {}, showRegisterPage: () {},),
         type: PageTransitionType.leftToRight,
       ),
     );
@@ -42,15 +42,30 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future signUp() async {
+
+    // círculo de loading
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
     if (acceptTerms != true) {
       return RegisterPage(showLoginPage: () {});
     }
 
-    if (passwordConfirmed()) {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _controladorEmail.text.trim(),
-          password: _controladorSenha.text.trim());
+    var formValid = _formKey.currentState?.validate() ?? false;
+    if (formValid) {
+      if (passwordConfirmed()) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _controladorEmail.text.trim(),
+            password: _controladorSenha.text.trim());
+      }
     }
+    Navigator.pop(context);
   }
 
   bool passwordConfirmed() {
@@ -100,7 +115,8 @@ class _RegisterPageState extends State<RegisterPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Form(
-                child: TextField(
+                key: _formKey,
+                child: TextFormField(
                   controller: _controladorNome,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
@@ -126,8 +142,12 @@ class _RegisterPageState extends State<RegisterPage> {
             // campo para digitar o e-mail
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: TextField(
+              child: TextFormField(
                 controller: _controladorEmail,
+                validator: Validatorless.multiple([
+                  Validatorless.email('E-mail inválido'),
+                  Validatorless.required('E-mail obrigatório'),
+                ]),
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 1.35),
@@ -151,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
             // campo para digitar a senha
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: TextField(
+              child: TextFormField(
                 obscureText: true,
                 controller: _controladorSenha,
                 decoration: InputDecoration(
@@ -177,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
             // campo para confirmar a senha
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: TextField(
+              child: TextFormField(
                 obscureText: true,
                 controller: _controladorConfirmarSenha,
                 decoration: InputDecoration(
@@ -221,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   onTap: termsAndConditions,
                   child: Text(' Termos e Condições.',
                       style: TextStyle(
-                        color: Colors.greenAccent,
+                        color: Colors.green,
                         fontWeight: FontWeight.bold,
                       )),
                 ),
@@ -233,28 +253,30 @@ class _RegisterPageState extends State<RegisterPage> {
             // botão entrar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: GestureDetector(
+              child: InkWell(
                 // verifica se o botão foi apertado
                 onTap: signUp, // executa a ação do botão
-                child: Container(
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                      color: Colors.greenAccent,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.8),
-                          blurRadius: 80,
-                          offset: Offset(3, 5),
-                        )
-                      ]),
-                  child: const Center(
-                    child: Text(
-                      'Registrar',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                child: Ink(
+                  child: Container(
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                        color: Colors.greenAccent,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.8),
+                            blurRadius: 80,
+                            offset: Offset(3, 5),
+                          )
+                        ]),
+                    child: const Center(
+                      child: Text(
+                        'Registrar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ),
@@ -280,7 +302,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   child: Text(' Faça seu login!',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.green,
                         fontWeight: FontWeight.bold,
                       )),
                 ),

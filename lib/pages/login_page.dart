@@ -1,16 +1,16 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:login_page_pmsf/pages/forgot_password_page.dart';
-import 'package:login_page_pmsf/pages/home_page.dart';
 import 'package:login_page_pmsf/pages/register_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:validatorless/validatorless.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback showRegisterPage;
-  const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
+  final VoidCallback showHomePage;
+  const LoginPage({Key? key, required this.showRegisterPage, required this.showHomePage}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -29,15 +29,6 @@ class _LoginPageState extends State<LoginPage> {
             type: PageTransitionType.rightToLeft));
   }
 
-  routeTransitionSingIn() {
-    Navigator.push(
-        context,
-        PageTransition(
-          child: HomePage(),
-          type: PageTransitionType.rightToLeft,
-        ));
-  }
-
   forgotPasswordRoute() {
     Navigator.push(
         context,
@@ -48,13 +39,91 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future singIn() async {
-    var formValid = _formKey.currentState?.validate() ?? false;
-    if (formValid) {}
+
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+    });
+  
+  try {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _controladorEmail.text.trim(),
       password: _controladorSenha.text.trim(),
-    );
+      );
+  
+    Navigator.pop(context);
+  } on FirebaseAuthException catch (e) {
+    Navigator.pop(context);
+
+    if (e.code == 'user-not-found') {
+      showEmailError();
+    }
+    else if (e.code == 'wrong-password') {
+      showPasswordError();
+    }
+    else if (e.code == 'unknown')  {
+      showUnknownError();
+    }
   }
+}
+
+  void showEmailError(){
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.greenAccent,
+          title: Center(
+            child: Text(
+              'E-mail incorreto',
+              style: TextStyle(
+                color: Colors.white
+              ),
+            ),
+          ),
+        );
+    });
+  }
+
+   void showPasswordError(){
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.greenAccent,
+          title: Center(
+            child: Text(
+              'Senha incorreta',
+              style: TextStyle(
+                color: Colors.white
+              ),
+            ),
+          ),
+        );
+    });
+  }
+
+   void showUnknownError(){
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.greenAccent,
+          title: Center(
+            child: Text(
+              'Campo obrigatório',
+              style: TextStyle(
+                color: Colors.white
+              ),
+            ),
+          ),
+        );
+    });
+  }
+
 
   @override
   void dispose() {
@@ -86,9 +155,8 @@ class _LoginPageState extends State<LoginPage> {
                 fontSize: 36,
               ),
             ),
-            SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
               child: Center(
                 child: Text(
                   'Seja bem vindo novamente, sentimos a sua falta!',
@@ -99,19 +167,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            SizedBox(height: 20),
-
             // campo para digitar o e-mail
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Form(
-                key: _formKey,
+              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
                 child: TextFormField(
                   controller: _controladorEmail,
-                  validator: Validatorless.multiple([
-                    Validatorless.email('Digite o seu e-mail'),
-                    Validatorless.required('E-mail inválido')
-                  ]),
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 1.35),
@@ -129,17 +189,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-            ),
-
-            SizedBox(height: 10),
 
             // campo para digitar a senha
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: TextFormField(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
+              child: TextField(
                 obscureText: true,
                 controller: _controladorSenha,
-                validator: Validatorless.required('Senha inválida'),
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 1.35),
@@ -158,11 +214,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            SizedBox(height: 5),
-
             // esqueceu a sua senha
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -176,16 +230,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            SizedBox(height: 30),
-
             // botão entrar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: InkWell(
-                // verifica se o botão foi apertado
-                onTap: () => {
-                  routeTransitionSingIn(),
-                }, // executa a ação do botão
+              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25),
+              child: InkWell( // verifica se o botão foi apertado
+                onTap: singIn, // executa a ação do botão
                 child: Ink(
                   padding: EdgeInsets.all(15),
                   decoration: BoxDecoration(
@@ -212,8 +261,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
-
             // botão registrar
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -228,7 +275,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () => {routeTransitionSingUp(widget.showRegisterPage)},
                   child: Text(' Crie uma conta!',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.green,
                         fontWeight: FontWeight.bold,
                       )),
                 ),
