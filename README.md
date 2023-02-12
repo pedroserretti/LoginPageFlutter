@@ -12,7 +12,7 @@ Currently, this project contains:
 - Login Page
 - Register Page 
 - Forgot your password Page 
-- Main Page (under development)
+- Home Page (under development)
 - CRUD (not started)
 
 It still has some bugs, but i'm working on updating it and making it as good as possible!
@@ -20,7 +20,6 @@ It still has some bugs, but i'm working on updating it and making it as good as 
 ## Packages 
 
 Some packages used:
-- [Validatorless](https://pub.dev/packages/validatorless)
 - [Splash Screen](https://pub.dev/packages/flutter_native_splash)
 - [Page Transition](https://pub.dev/packages/page_transition)
 - [Firebase Database](https://pub.dev/packages/firebase_database)
