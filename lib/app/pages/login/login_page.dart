@@ -6,7 +6,6 @@ import 'package:login_page_pmsf/app/pages/forgot_password/forgot_password_page.d
 import 'package:login_page_pmsf/app/pages/register/register_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../ui/widgets/app_button.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,7 +17,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>{
   final _controladorEmail = TextEditingController();
   final _controladorSenha = TextEditingController();
 
@@ -27,7 +26,9 @@ class _LoginPageState extends State<LoginPage> {
         context,
         PageTransition(
             child: RegisterPage(showLoginPage: () {}),
-            type: PageTransitionType.rightToLeft));
+            type: PageTransitionType.rightToLeft
+        )
+      );
   }
 
   forgotPasswordRoute() {
@@ -36,7 +37,8 @@ class _LoginPageState extends State<LoginPage> {
         PageTransition(
           child: ForgotPasswordPage(),
           type: PageTransitionType.rightToLeft,
-        ));
+        )
+    );
   }
 
   Future singIn() async {
@@ -235,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.all(20.0),
                       child: AppButton(
                         onPressed: singIn,
-                        label: 'Cadastrar',
+                        label: 'Entrar',
                         width: 370,
                         height: 50,
                       ),

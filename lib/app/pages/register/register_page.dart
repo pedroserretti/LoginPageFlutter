@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:login_page_pmsf/app/pages/home/home_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -10,7 +11,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:validatorless/validatorless.dart';
-
 import '../../components/home_modal_add.dart';
 import '../../ui/widgets/app_button.dart';
 
@@ -45,13 +45,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   showEmailInUseError() {
     showTopSnackBar(
-      Overlay.of(context),
-      CustomSnackBar.error(
-        message: 'E-mail já está sendo utilizado por outro usuário',
+        Overlay.of(context),
+          CustomSnackBar.error(
+          message: 'E-mail já está sendo utilizado por outro usuário',
         )
-      );
+     );
   }
-  
 
   Future termsAndConditions() async {
     await showBarModalBottomSheet(
@@ -60,20 +59,61 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future signUp() async {
     try {
-  var formValid = _formKey.currentState?.validate() ?? false;
-  if (formValid) {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _controladorEmail.text.trim(),
-        password: _controladorSenha.text.trim());
+      var formValid = _formKey.currentState?.validate() ?? false;
+
+      if (formValid) {
+        await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _controladorEmail.text.trim(),
+            password: _controladorSenha.text.trim())
+          .then((UserCredential userCredential) {
+            userCredential.user!.updateDisplayName(_controladorNome.text);
+            
+            // adicionar detalhes de usuário
+            addUserDetails(
+              _controladorEmail.text.trim(),
+              _controladorNome.text.trim()
+            );
+          
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(showLoginPage: () {}),
+              ),
+              (route) => false);
+            showTopSnackBar(
+              Overlay.of(context),
+              CustomSnackBar.success(
+              message:
+                'Cadastro realizado com sucesso, bem vindo!',
+              ), 
+            );
+          }
+        );
+      }
+
+      if (acceptTerms != true) {
+        showTopSnackBar(
+              Overlay.of(context),
+              CustomSnackBar.error(
+              message:
+                'Você precisa aceitar os termos e condições.',
+              ), 
+            );
+        return RegisterPage(showLoginPage: () {});    
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        showEmailInUseError();
+      }
+    }
   }
-  if (acceptTerms != true) {
-    return RegisterPage(showLoginPage: () {});
-  }
-} on FirebaseAuthException catch (e) {
-  if (e.code == 'email-already-in-use'){
-    showEmailInUseError();
-  }
-}
+
+  Future addUserDetails(String name, String email) async {
+    await FirebaseFirestore.instance.collection('users').add({
+      'name': name,
+      'email': email,
+    });
   }
 
   @override
@@ -86,7 +126,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -111,11 +151,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         context.textStyles.textExtraBold.copyWith(fontSize: 30),
                   ),
                   const SizedBox(
-                     height: 10,
+                    height: 10,
                   ),
                   Text(
                     'Preencha os campos abaixo para criar o seu cadastro.',
-                    style: context.textStyles.textRegular.copyWith(fontSize: 14),
+                    style:
+                        context.textStyles.textRegular.copyWith(fontSize: 14),
                   ),
 
                   SizedBox(height: 30),
@@ -272,35 +313,39 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
 
                   // botão entrar
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: AppButton(
-                        onPressed: signUp,
-                        label: 'Cadastrar',
-                        width: 370,
-                        height: 50,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: AppButton(
+                      onPressed: signUp,
+                      label: 'Cadastrar',
+                      width: 370,
+                      height: 50,
                     ),
+                  ),
 
                   const SizedBox(height: 20),
 
                   // botão registrar
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text(
-                      'Já tem uma conta?',
-                      style: context.textStyles.textExtraBold
-                          .copyWith(fontSize: 14),
-                    ),
-                    GestureDetector(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Já tem uma conta?',
+                        style: context.textStyles.textExtraBold
+                            .copyWith(fontSize: 14),
+                      ),
+                      GestureDetector(
                         onTap: () => {
-                              routeTransition(widget.showLoginPage),
-                            },
+                          routeTransition(widget.showLoginPage),
+                        },
                         child: Text(
                           ' Faça seu login!',
                           style: context.textStyles.textBold
                               .copyWith(fontSize: 14, color: Colors.green),
-                        )),
-                  ]),
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               )
             ),

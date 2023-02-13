@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required Null Function() showLoginPage}) : super(key: key);
@@ -12,12 +13,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   
-  Future signOut() async => await FirebaseAuth.instance.signOut();
+  Future signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(  
+      MaterialPageRoute(
+        builder: (
+          (context) => LoginPage(
+            showHomePage: () {}, 
+            showRegisterPage: () {}
+          )
+        ),
+      )
+    );
+  } 
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
