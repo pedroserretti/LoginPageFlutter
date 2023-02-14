@@ -95,10 +95,10 @@ class _HomeEditPageState extends State<HomeEditPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0), 
             child: AppButton(
               onPressed: () {
-                FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text.trim(), email: _controladorEmail!.text.trim()),).then((value) {
+                FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text, email: _controladorEmail!.text),).then((value) {
                   Navigator.pop(context);
                 });
               },
