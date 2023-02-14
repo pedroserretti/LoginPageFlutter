@@ -12,8 +12,8 @@ Currently, this project contains:
 - Login Page
 - Register Page 
 - Forgot your password Page 
-- Home Page (under development)
-- CRUD (not started)
+- Home Page 
+- CRUD (under development)
 
 It still has some bugs, but i'm working on updating it and making it as good as possible!
 
