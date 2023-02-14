@@ -8,8 +8,6 @@ import 'package:login_page_pmsf/app/pages/home/home_edit_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/colors_app.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../ui/widgets/app_button.dart';
 
@@ -184,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 }
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
             )
         ]),
