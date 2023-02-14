@@ -1,11 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_build_context_synchronously
 
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page_pmsf/app/helpers/size_extensions.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+
 
 import '../../ui/widgets/app_button.dart';
 
@@ -20,18 +22,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final _controladorEsqueceuSenha = TextEditingController();
 
-  Future forgotPassword() async {
+  Future<void> forgotPassword() async {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _controladorEsqueceuSenha.text.trim());
       showTopSnackBar(
           Overlay.of(context),
-          CustomSnackBar.success(
+          const CustomSnackBar.success(
             message:
                 'Link de e-mail enviado com sucesso, verifique sua caixa de e-mail!',
           ));
     } on FirebaseAuthException catch (errorPasswordReset) {
-      print(errorPasswordReset);
+      log(errorPasswordReset.message.toString());
       showDialog(
           context: context,
           builder: (context) {

@@ -2,75 +2,192 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_page_pmsf/app/helpers/firestore_helper.dart';
+import 'package:login_page_pmsf/app/models/user_model.dart';
+import 'package:login_page_pmsf/app/pages/home/home_edit_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
+import 'package:login_page_pmsf/app/ui/styles/colors_app.dart';
+import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+
+import '../../ui/widgets/app_button.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required Null Function() showLoginPage}) : super(key: key);
+  const HomePage({Key? key, required Null Function() showLoginPage})
+      : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  
+  final _controladorNome = TextEditingController();
+  final _controladorEmail = TextEditingController();
+
+  @override
+  void dispose() {
+    _controladorNome.dispose();
+    _controladorEmail.dispose();
+    super.dispose();
+  }
+
   Future signOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(  
-      MaterialPageRoute(
-        builder: (
-          (context) => LoginPage(
-            showHomePage: () {}, 
-            showRegisterPage: () {}
-          )
-        ),
-      )
-    );
-  } 
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: ((context) =>
+          LoginPage(showHomePage: () {}, showRegisterPage: () {})),
+    ));
+  }
+
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-            Text(
-              'Logado como: ' + user.email!,
-              style: const TextStyle(
-                fontSize: 15,
-              ),
-            ),
-          
-            const SizedBox(height: 20),
-
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: GestureDetector(
-                onTap: signOut,
-                child: Container(
-                  padding: const EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    color: Colors.greenAccent,
-                    borderRadius: BorderRadius.circular(15)
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 70,
+          title: const Text('Página Inicial'),
+          centerTitle: true,
+          backgroundColor: Colors.greenAccent,
+          leading: IconButton(
+            onPressed: signOut,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(45),
+                  bottomRight: Radius.circular(45))),
+        ),
+        body: Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            child: TextFormField(
+              controller: _controladorNome,
+              decoration: InputDecoration(
+                labelText: 'Nome',
+                labelStyle: context.textStyles.textRegular
+                    .copyWith(color: Colors.grey[600]),
+                enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.white, width: 1.35),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Sair',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.greenAccent, width: 1.35),
+                  borderRadius: BorderRadius.circular(15),
                 ),
+                fillColor: Colors.grey[200],
+                filled: true,
               ),
             ),
           ),
-          ],
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            child: TextFormField(
+              controller: _controladorEmail,
+              decoration: InputDecoration(
+                labelText: 'E-mail',
+                labelStyle: context.textStyles.textRegular
+                    .copyWith(color: Colors.grey[600]),
+                enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.white, width: 1.35),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.greenAccent, width: 1.35),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                fillColor: Colors.grey[200],
+                filled: true,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: AppButton(
+              onPressed: () {
+                FirestoreHelper.create(
+                  UserModel(
+                    name: _controladorNome.text.trim(),
+                    email: _controladorEmail.text.trim()
+                  )
+                );
+              },
+              label: 'Cadastrar',
+              width: 120,
+              height: 50,
+            ),
+          ),
+          const SizedBox(height: 20),
+          StreamBuilder<List<UserModel>>(
+              stream: FirestoreHelper.read(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: CircularProgressIndicator()
+                  );
+                }
+                if (snapshot.hasData) {
+                  final userData = snapshot.data;
+                  return Expanded(
+                  child: ListView.builder(
+                    itemCount: userData!.length,
+                    itemBuilder: (context, index) {
+                      final singleUser = userData[index]; 
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          child: ListTile(
+                            leading: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: ColorsApp.i.secondary,
+                                  shape: BoxShape.circle
+                              ),
+                            ),
+                            title: Text(
+                              "${singleUser.name}"
+                            ),
+                            subtitle: Text(
+                              "${singleUser.email}",
+                            ),
+                            trailing: InkWell(
+                              onTap: () { 
+                                Navigator.push(
+                                  context, MaterialPageRoute(
+                                    builder: (context) => HomeEditPage(
+                                      user: UserModel(
+                                        name: singleUser.name, 
+                                        email: singleUser.email,
+                                        id: singleUser.id
+                                      )
+                                    )
+                                  )
+                                );
+                              },
+                              child: Icon(Icons.edit,
+                               color: context.colors.secondary),
+                            ),
+                          )
+                        );
+                      },
+                    ),
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
+              }
+            )
+        ]),
       ),
     );
   }

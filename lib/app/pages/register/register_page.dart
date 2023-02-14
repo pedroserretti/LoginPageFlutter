@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
         context: context, builder: (context) => HomeModalAdd());
   }
 
-  Future signUp() async {
+  Future<void> signUp() async {
     try {
       var formValid = _formKey.currentState?.validate() ?? false;
 
@@ -90,17 +90,6 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           }
         );
-      }
-
-      if (acceptTerms != true) {
-        showTopSnackBar(
-              Overlay.of(context),
-              CustomSnackBar.error(
-              message:
-                'Você precisa aceitar os termos e condições.',
-              ), 
-            );
-        return RegisterPage(showLoginPage: () {});    
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -229,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: Validatorless.multiple([
                         Validatorless.min(6,
                             'A senha precisa conter no mínimo 6 caracteres.'),
-                        Validatorless.required('E-mail obrigatório.'),
+                        Validatorless.required('Senha obrigatória.'),
                       ]),
                       decoration: InputDecoration(
                         labelText: 'Senha',
@@ -290,7 +279,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Checkbox(
                         value: acceptTerms,
                         activeColor: Colors.greenAccent,
-                        onChanged: (checked) {
+                        onChanged: (bool? checked) {
                           setState(() {
                             acceptTerms = checked!;
                           });
@@ -312,11 +301,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     ],
                   ),
 
-                  // botão entrar
+                  // botão cadastrar
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: AppButton(
-                      onPressed: signUp,
+                      onPressed: !acceptTerms ? null : signUp,
                       label: 'Cadastrar',
                       width: 370,
                       height: 50,
@@ -325,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                   const SizedBox(height: 20),
 
-                  // botão registrar
+                  // botão voltar para login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
