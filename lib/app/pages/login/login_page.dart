@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage>{
       email: _controladorEmail.text.trim(),
       password: _controladorSenha.text.trim(),
       );
-  
+
     Navigator.pop(context);
   } on FirebaseAuthException catch (e) {
     Navigator.pop(context);

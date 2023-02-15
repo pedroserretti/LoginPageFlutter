@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,5 +51,11 @@ class FirestoreHelper {
     } catch (e) {
       log("Some error ocurred $e");
     }
+  }
+
+  static Future delete(UserModel user) async {
+    final userCollection = FirebaseFirestore.instance.collection("users");
+    
+    final docRef = userCollection.doc(user.id).delete();
   }
 }
