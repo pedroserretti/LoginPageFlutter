@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page_pmsf/app/helpers/firestore_helper.dart';
+import 'package:login_page_pmsf/app/helpers/message_error.dart';
 import 'package:login_page_pmsf/app/models/user_model.dart';
 import 'package:login_page_pmsf/app/pages/home/home_edit_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
@@ -19,7 +20,8 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-class _HomePageState extends State<HomePage> {
+
+class _HomePageState extends State<HomePage> with MessageError{
   final _formKey = GlobalKey<FormState>();
   final _controladorNome = TextEditingController();
   final _controladorEmail = TextEditingController();
@@ -44,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(  
+    return SafeArea(
       child: Form(
         key: _formKey,
         child: Scaffold(
@@ -58,9 +60,11 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.arrow_back),
             ),
             shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(45),
-                    bottomRight: Radius.circular(45))),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(45),
+                bottomRight: Radius.circular(45)
+              )
+            ),
           ),
           body: Column(children: [
             Padding(
@@ -78,8 +82,8 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                    borderSide: const BorderSide(
+                        color: Colors.greenAccent, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   fillColor: Colors.grey[200],
@@ -105,8 +109,8 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                    borderSide: const BorderSide(
+                        color: Colors.greenAccent, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   fillColor: Colors.grey[200],
@@ -120,7 +124,8 @@ class _HomePageState extends State<HomePage> {
                 controller: _controladorSenha,
                 obscureText: true,
                 validator: Validatorless.multiple([
-                  Validatorless.min(6, 'Senha precisa ter no mínimo 6 caracteres'),
+                  Validatorless.min(
+                      6, 'Senha precisa ter no mínimo 6 caracteres'),
                   Validatorless.required('Senha obrigatória'),
                 ]),
                 decoration: InputDecoration(
@@ -133,8 +138,8 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                    borderSide: const BorderSide(
+                        color: Colors.greenAccent, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   fillColor: Colors.grey[200],
@@ -146,23 +151,33 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(20.0),
               child: AppButton(
                 onPressed: () {
-                  var formValid = _formKey.currentState?.validate() ?? false;
-
-                  if (formValid) {
-                    FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: _controladorEmail.text.trim(),
-                      password: _controladorSenha.text.trim()).then((UserCredential userCredential) {
-                        userCredential.user!.updateDisplayName(_controladorNome.text);
-
-                        FirestoreHelper.create(UserModel(
-                          name: _controladorNome.text.trim(),
-                          email: _controladorEmail.text.trim(),
-                          password: _controladorSenha.text.trim(),
-                          )
-                        );
-                      }
-                    );
+                  try {
+                    var formValid = _formKey.currentState?.validate() ?? false;
+  
+                    if (formValid) {
+                      FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        email: _controladorEmail.text.trim(),
+                        password: _controladorSenha.text.trim())
+                        .then((UserCredential userCredential) {
+                          userCredential.user!.updateDisplayName(_controladorNome.text);
+  
+                          FirestoreHelper.create(
+                            UserModel(
+                              name: _controladorNome.text.trim(),
+                              email: _controladorEmail.text.trim(),
+                              password: _controladorSenha.text.trim(),
+                            ),
+                          );
+                        }
+                      );
+                      
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'email-already-in-use') {
+                      showError('E-mail já está em uso');
+                    }
                   }
+                  showSuccess('Usuário cadastrado com sucesso!');
                 },
                 label: 'Cadastrar',
                 width: 120,
@@ -193,29 +208,26 @@ class _HomePageState extends State<HomePage> {
                               child: ListTile(
                                 onLongPress: () {
                                   showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: const Text(
-                                          'Deletar'
-                                        ),
-                                        content: const Text(
-                                          'Você tem certeza que deseja deletar o usuário?'),
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text('Deletar'),
+                                          content: const Text(
+                                              'Você tem certeza que deseja deletar o usuário?'),
                                           actions: [
-                                            AppButton(
-                                              label: 'Deletar',
-                                              onPressed: () {
-                                                FirestoreHelper.delete(
-                                                  singleUser)
-                                                  .then((value) => {
-                                                    Navigator.pop(context)
+                                              AppButton(
+                                                label: 'Deletar',
+                                                  onPressed: () {
+                                                    FirestoreHelper.delete(singleUser)
+                                                      .then((value) => {
+                                                        Navigator.pop(context)
+                                                      }
+                                                    );
                                                   }
-                                                );
-                                              }
-                                            )
+                                              )
                                           ],
-                                      );
-                                    }
+                                        );
+                                      }
                                   );
                                 },
                                 leading: Container(
@@ -232,33 +244,29 @@ class _HomePageState extends State<HomePage> {
                                 trailing: InkWell(
                                   onTap: () {
                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HomeEditPage(
-                                          user: UserModel(
-                                            name: singleUser.name,
-                                            email: singleUser.email,
-                                            id: singleUser.id
-                                          )
-                                        )
-                                      )
-                                    );
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomeEditPage(
+                                                user: UserModel(
+                                                    name: singleUser.name,
+                                                    email: singleUser.email,
+                                                    id: singleUser.id))));
                                   },
                                   child: Icon(Icons.edit,
-                                    color: context.colors.secondary),
+                                      color: context.colors.secondary),
                                 ),
-                              )
-                            );
+                              ),
+                          );
                         },
                       ),
                     );
                   }
                   return const Center(child: CircularProgressIndicator());
                 }
-              )
-          ]),
+              )]
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}

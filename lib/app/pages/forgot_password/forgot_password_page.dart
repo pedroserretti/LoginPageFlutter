@@ -23,8 +23,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageErr
 
   Future<void> forgotPassword() async {
     try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: _controladorEsqueceuSenha.text.trim());
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _controladorEsqueceuSenha.text.trim());
       showSuccess('Link de e-mail enviado com sucesso, verifique sua caixa de e-mail!');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'unknown') {
@@ -52,20 +51,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageErr
   Widget build(BuildContext context) {
     //app bar ''recupere a sua senha''
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.grey[300],
-        title: const Text(
-          'Recupere a sua senha',
-          style: TextStyle(
-            color: Color(0xFF252525),
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+            toolbarHeight: 70,
+            title: const Text('Página Inicial'),
+            centerTitle: true,
+            backgroundColor: Colors.greenAccent,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back),
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(45),
+                bottomRight: Radius.circular(45)
+              )
+            ),
           ),
-        ),
-        iconTheme: const IconThemeData(color: Color(0xFF464545)),
-      ),
 
       //campo para digitar o e-mail e recuperar a senha.
       body: Center(

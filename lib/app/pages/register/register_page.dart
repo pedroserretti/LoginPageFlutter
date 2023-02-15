@@ -62,9 +62,10 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
 
             FirestoreHelper.create(UserModel(
               name: _controladorNome.text.trim(),
-              email: _controladorEmail.text.trim()));
-          
-          
+              email: _controladorEmail.text.trim(),
+              password: _controladorSenha.text.trim(),
+              )
+            );
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -96,8 +97,8 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: SingleChildScrollView(
-        child: Center(
+      body: Center(
+        child: SingleChildScrollView(
           child: Form(
               key: _formKey,
               child: Column(
@@ -105,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                 children: [
                   SizedBox(
                     width: 100,
-                    height: 200,
+                    height: 100,
                   ),
 
                   SizedBox(height: 10),

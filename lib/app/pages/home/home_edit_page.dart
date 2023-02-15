@@ -57,6 +57,29 @@ class _HomeEditPageState extends State<HomeEditPage> {
                 decoration: InputDecoration(
                   labelText: 'Nome',
                   labelStyle: context.textStyles.textRegular
+                  .copyWith(color: Colors.grey[600]),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                      const BorderSide(color: Colors.white, width: 1.35),
+                      borderRadius: BorderRadius.circular(15),
+                  ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Colors.greenAccent, width: 1.35),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    fillColor: Colors.grey[200],
+                    filled: true,
+                  ),
+                ),
+              ),
+              Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+              child: TextFormField(
+                controller: _controladorEmail,
+                decoration: InputDecoration(
+                  labelText: 'E-mail',
+                  labelStyle: context.textStyles.textRegular
                       .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
@@ -64,8 +87,8 @@ class _HomeEditPageState extends State<HomeEditPage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        color: Colors.greenAccent, width: 1.35),
+                    borderSide:
+                        const BorderSide(color: Colors.greenAccent, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   fillColor: Colors.grey[200],
@@ -74,68 +97,45 @@ class _HomeEditPageState extends State<HomeEditPage> {
               ),
             ),
             Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-            child: TextFormField(
-              controller: _controladorEmail,
-              decoration: InputDecoration(
-                labelText: 'E-mail',
-                labelStyle: context.textStyles.textRegular
-                    .copyWith(color: Colors.grey[600]),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(color: Colors.white, width: 1.35),
-                  borderRadius: BorderRadius.circular(15),
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+              child: TextFormField(
+                controller: _controladorSenha,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  labelStyle: context.textStyles.textRegular
+                      .copyWith(color: Colors.grey[600]),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.white, width: 1.35),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  fillColor: Colors.grey[200],
+                  filled: true,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(color: Colors.greenAccent, width: 1.35),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                fillColor: Colors.grey[200],
-                filled: true,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-            child: TextFormField(
-              controller: _controladorSenha,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Senha',
-                labelStyle: context.textStyles.textRegular
-                    .copyWith(color: Colors.grey[600]),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(color: Colors.white, width: 1.35),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(color: Colors.greenAccent, width: 1.35),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                fillColor: Colors.grey[200],
-                filled: true,
+            Padding(
+              padding: const EdgeInsets.all(20.0), 
+              child: AppButton(
+                onPressed: () {
+                  FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text, email: _controladorEmail!.text, password: _controladorSenha!.text)).then((value) {
+                    Navigator.pop(context);
+                  });
+                },
+                label: 'Atualizar',
+                width: 120,
+                height: 50,
               ),
             ),
+            ]),
           ),
-          Padding(
-            padding: const EdgeInsets.all(20.0), 
-            child: AppButton(
-              onPressed: () {
-                FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text, email: _controladorEmail!.text, password: _controladorSenha!.text)).then((value) {
-                  Navigator.pop(context);
-                });
-              },
-              label: 'Atualizar',
-              width: 120,
-              height: 50,
-            ),
-          ),
-          ]),
         ),
-      ),
-    );
+      );
   }
 }
