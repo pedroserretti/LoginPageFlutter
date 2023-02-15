@@ -13,6 +13,8 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:validatorless/validatorless.dart';
 import '../../components/home_modal_add.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../models/user_model.dart';
 import '../../ui/widgets/app_button.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -69,12 +71,11 @@ class _RegisterPageState extends State<RegisterPage> {
             password: _controladorSenha.text.trim())
           .then((UserCredential userCredential) {
             userCredential.user!.updateDisplayName(_controladorNome.text);
-            
-            // adicionar detalhes de usuário
-            addUserDetails(
-              _controladorEmail.text.trim(),
-              _controladorNome.text.trim()
-            );
+
+            FirestoreHelper.create(UserModel(
+              name: _controladorNome.text.trim(),
+              email: _controladorEmail.text.trim()));
+          
           
             Navigator.pushAndRemoveUntil(
               context,
@@ -97,13 +98,6 @@ class _RegisterPageState extends State<RegisterPage> {
         showEmailInUseError();
       }
     }
-  }
-
-  Future addUserDetails(String name, String email) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'name': name,
-      'email': email,
-    });
   }
 
   @override
