@@ -1,12 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_build_context_synchronously
-
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_page_pmsf/app/helpers/message_error.dart';
 import 'package:login_page_pmsf/app/helpers/size_extensions.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
+
 
 
 import '../../ui/widgets/app_button.dart';
@@ -18,7 +17,7 @@ class ForgotPasswordPage extends StatefulWidget {
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageError{
   final GlobalKey<FormState> _formKey = GlobalKey();
   final _controladorEsqueceuSenha = TextEditingController();
 
@@ -26,26 +25,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _controladorEsqueceuSenha.text.trim());
-      showTopSnackBar(
-          Overlay.of(context),
-          const CustomSnackBar.success(
-            message:
-                'Link de e-mail enviado com sucesso, verifique sua caixa de e-mail!',
-          ));
-    } on FirebaseAuthException catch (errorPasswordReset) {
-      log(errorPasswordReset.message.toString());
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text(
-                errorPasswordReset.message.toString(),
-              ),
-            );
-          }
-        );
+      showSuccess('Link de e-mail enviado com sucesso, verifique sua caixa de e-mail!');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'unknown') {
+        log('unknown');
+        showError('É necessário digitar um e-mail para recuperar sua senha');
+      }
+      if (e.code == 'user-not-found') {
+        log('user not found');
+        showError('Usuário não encontrado');
+      }
+      if (e.code == 'invalid-email') {
+        log('user not found');
+        showError('O e-mail está inválido ou mal formatado');
       }
     }
+  }
 
   @override
   void dispose() {

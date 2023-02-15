@@ -24,7 +24,8 @@ class FirestoreHelper {
     final newUser = UserModel(
       id: uid,
       name: user.name, 
-      email: user.email
+      email: user.email,
+      password: user.password
       ).toJson();
 
     try {
@@ -43,7 +44,8 @@ class FirestoreHelper {
     final newUser = UserModel(
       id: user.id,
       name: user.name, 
-      email: user.email
+      email: user.email,
+      password: user.password
       ).toJson();
 
     try {

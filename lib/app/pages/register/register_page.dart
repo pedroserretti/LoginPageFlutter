@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_page_pmsf/app/helpers/message_error.dart';
 import 'package:login_page_pmsf/app/pages/home/home_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
@@ -25,7 +24,7 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> with MessageError{
   bool acceptTerms = false;
   final _formKey = GlobalKey<FormState>();
   final _controladorEmail = TextEditingController();
@@ -44,15 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
         type: PageTransitionType.leftToRight,
       ),
     );
-  }
-
-  showEmailInUseError() {
-    showTopSnackBar(
-        Overlay.of(context),
-          CustomSnackBar.error(
-          message: 'E-mail já está sendo utilizado por outro usuário',
-        )
-     );
   }
 
   Future termsAndConditions() async {
@@ -83,19 +73,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 builder: (context) => HomePage(showLoginPage: () {}),
               ),
               (route) => false);
-            showTopSnackBar(
-              Overlay.of(context),
-              CustomSnackBar.success(
-              message:
-                'Cadastro realizado com sucesso, bem vindo!',
-              ), 
-            );
+            showSuccess('Cadastro realizado com sucesso, bem vindo!');
           }
         );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        showEmailInUseError();
+        showError('E-mail já está sendo utilizado por outro usuário');
       }
     }
   }

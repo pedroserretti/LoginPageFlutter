@@ -7,21 +7,24 @@ class UserModel {
   final String? id;
   final String? name;
   final String? email;
+  final String? password;
 
 
   UserModel({
     this.name,
     this.email,
-    this.id  
+    this.id,
+    this.password
   });
 
   factory UserModel.fromSnapshot(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return UserModel(
-      name: snapshot['user'],
+      name: snapshot['name'],
       email: snapshot['email'],
       id: snapshot['id'],
+      password: snapshot['password'],
     );
   }
 
@@ -29,5 +32,6 @@ class UserModel {
     "name" : name,
     "email" : email,  
     "id": id,
+    "password": password
   };
 }

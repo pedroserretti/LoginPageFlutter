@@ -19,11 +19,11 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
   final _controladorNome = TextEditingController();
   final _controladorEmail = TextEditingController();
+  final _controladorSenha = TextEditingController();
 
   @override
   void dispose() {
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   Future signOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
+    Navigator.of(context).push(MaterialPageRoute(
       builder: ((context) =>
           LoginPage(showHomePage: () {}, showRegisterPage: () {})),
     ));
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SafeArea(  
       child: Form(
         key: _formKey,
         child: Scaffold(
@@ -115,12 +115,54 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+              child: TextFormField(
+                controller: _controladorSenha,
+                obscureText: true,
+                validator: Validatorless.multiple([
+                  Validatorless.min(6, 'Senha precisa ter no mínimo 6 caracteres'),
+                  Validatorless.required('Senha obrigatória'),
+                ]),
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  labelStyle: context.textStyles.textRegular
+                      .copyWith(color: Colors.grey[600]),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.white, width: 1.35),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  fillColor: Colors.grey[200],
+                  filled: true,
+                ),
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.all(20.0),
               child: AppButton(
                 onPressed: () {
-                  FirestoreHelper.create(UserModel(
-                      name: _controladorNome.text.trim(),
-                      email: _controladorEmail.text.trim()));
+                  var formValid = _formKey.currentState?.validate() ?? false;
+
+                  if (formValid) {
+                    FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: _controladorEmail.text.trim(),
+                      password: _controladorSenha.text.trim()).then((UserCredential userCredential) {
+                        userCredential.user!.updateDisplayName(_controladorNome.text);
+
+                        FirestoreHelper.create(UserModel(
+                          name: _controladorNome.text.trim(),
+                          email: _controladorEmail.text.trim(),
+                          password: _controladorSenha.text.trim(),
+                          )
+                        );
+                      }
+                    );
+                  }
                 },
                 label: 'Cadastrar',
                 width: 120,

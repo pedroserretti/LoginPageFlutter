@@ -1,12 +1,15 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously, avoid_print
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:login_page_pmsf/app/helpers/message_error.dart';
 import 'package:login_page_pmsf/app/pages/forgot_password/forgot_password_page.dart';
 import 'package:login_page_pmsf/app/pages/register/register_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../ui/widgets/app_button.dart';
+import '../home/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback showRegisterPage;
@@ -17,11 +20,11 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>{
+class _LoginPageState extends State<LoginPage> with MessageError{
   final _controladorEmail = TextEditingController();
   final _controladorSenha = TextEditingController();
 
-  routeTransitionSingUp(showRegisterPage) {
+  routeTransitionSignUp(showRegisterPage) {
     Navigator.push(
         context,
         PageTransition(
@@ -49,82 +52,40 @@ class _LoginPageState extends State<LoginPage>{
         return const Center(
           child: CircularProgressIndicator(),
         );
-    });
+      }
+    );
   
-  try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _controladorEmail.text.trim(),
-      password: _controladorSenha.text.trim(),
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _controladorEmail.text.trim(),
+        password: _controladorSenha.text.trim(),
       );
 
-    Navigator.pop(context);
-  } on FirebaseAuthException catch (e) {
-    Navigator.pop(context);
-
-    if (e.code == 'user-not-found') {
-      showEmailError();
-    }
-    else if (e.code == 'wrong-password') {
-      showPasswordError();
-    }
-    else if (e.code == 'unknown')  {
-      showUnknownError();
-    }
-  }
-}
-
-  void showEmailError(){
-    showDialog(
-      context: context, 
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.greenAccent,
-          title: Center(
-            child: Text(
-              'E-mail incorreto',
-              style: TextStyle(
-                color: Colors.white
-              ),
-            ),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (
+            (context) => HomePage(
+              showLoginPage: () {},
+            )
           ),
-        );
-    });
-  }
+        )
+      );
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
 
-   void showPasswordError(){
-    showDialog(
-      context: context, 
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.greenAccent,
-          title: Center(
-            child: Text(
-              'Senha incorreta',
-              style: TextStyle(
-                color: Colors.white
-              ),
-            ),
-          ),
-        );
-    });
-  }
-
-   void showUnknownError(){
-    showDialog(
-      context: context, 
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.greenAccent,
-          title: Center(
-            child: Text(
-              'Campo obrigatório',
-              style: TextStyle(
-                color: Colors.white
-              ),
-            ),
-          ),
-        );
-    });
+      if (e.code == 'user-not-found') {
+        showError('Usuário não encontrado');
+        log('user not found');
+      }
+      if (e.code == 'wrong-password') {
+        showError('Senha incorreta');
+        log('user password is wrong');
+      }
+      if (e.code == 'unknown')  {
+        showError('E-mail ou senha incorretos');
+        log('wrong e-mail or password');
+      }
+    }
   }
 
   @override
@@ -254,7 +215,7 @@ class _LoginPageState extends State<LoginPage>{
                   ),
                   GestureDetector(
                     onTap: () => {
-                      routeTransitionSingUp(widget.showRegisterPage)
+                      routeTransitionSignUp(widget.showRegisterPage)
                     },
                     child: Text(' Crie uma conta!',
                         style: TextStyle(
