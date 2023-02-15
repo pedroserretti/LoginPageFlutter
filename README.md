@@ -4,7 +4,7 @@ Hi! My name is Pedro Serretti, i'm a Computer Science student.
 
 I'm doing a mini project of a login page in Flutter/Dart to expand my knowledge using Firebase.
 
-(Developed with changes and adaptions inspired with by [Mitch Koko's videos](https://youtube.com/@createdbykoko))
+(Developed with changes, adaptions and improvements inspired with by [Mitch Koko's videos](https://youtube.com/@createdbykoko))
 
 ## How it works
 
