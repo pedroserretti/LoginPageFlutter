@@ -15,11 +15,13 @@ class HomeEditPage extends StatefulWidget {
 class _HomeEditPageState extends State<HomeEditPage> {
   TextEditingController? _controladorNome;
   TextEditingController? _controladorEmail;
+  TextEditingController? _controladorSenha;
 
   @override
   void initState() {
     _controladorNome = TextEditingController(text: widget.user.name);
     _controladorEmail = TextEditingController(text: widget.user.email);
+    _controladorSenha = TextEditingController(text: widget.user.password);
 
     super.initState();
   }
@@ -95,10 +97,34 @@ class _HomeEditPageState extends State<HomeEditPage> {
             ),
           ),
           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            child: TextFormField(
+              controller: _controladorSenha,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Senha',
+                labelStyle: context.textStyles.textRegular
+                    .copyWith(color: Colors.grey[600]),
+                enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.white, width: 1.35),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.greenAccent, width: 1.35),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                fillColor: Colors.grey[200],
+                filled: true,
+              ),
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(20.0), 
             child: AppButton(
               onPressed: () {
-                FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text, email: _controladorEmail!.text),).then((value) {
+                FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text, email: _controladorEmail!.text, password: _controladorSenha!.text)).then((value) {
                   Navigator.pop(context);
                 });
               },

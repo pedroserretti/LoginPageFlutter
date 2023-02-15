@@ -8,8 +8,6 @@ import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:validatorless/validatorless.dart';
 import '../../components/home_modal_add.dart';
 import '../../helpers/firestore_helper.dart';
