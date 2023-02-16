@@ -2,7 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login_page_pmsf/app/helpers/message_error.dart';
+import 'package:login_page_pmsf/app/helpers/messages.dart';
 import 'package:login_page_pmsf/app/pages/home/home_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
@@ -12,6 +12,7 @@ import 'package:validatorless/validatorless.dart';
 import '../../components/home_modal_add.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../models/user_model.dart';
+import '../../ui/styles/colors_app.dart';
 import '../../ui/widgets/app_button.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -22,7 +23,8 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> with MessageError{
+class _RegisterPageState extends State<RegisterPage> with Messages{
+  bool _obscureText = true;
   bool acceptTerms = false;
   final _formKey = GlobalKey<FormState>();
   final _controladorEmail = TextEditingController();
@@ -96,7 +98,6 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: Center(
         child: SingleChildScrollView(
           child: Form(
@@ -140,16 +141,14 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                             .copyWith(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.white, width: 1.35),
+                              BorderSide(color: Color(0xFF757575), width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.greenAccent, width: 1.35),
+                              color: ColorsApp.i.primary, width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
                       ),
                     ),
                   ),
@@ -171,16 +170,14 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                             .copyWith(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.white, width: 1.35),
+                              BorderSide(color: Color(0xFF757575), width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.greenAccent, width: 1.35),
+                              color: ColorsApp.i.primary, width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
                       ),
                     ),
                   ),
@@ -191,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: TextFormField(
-                      obscureText: true,
+                      obscureText: _obscureText,
                       controller: _controladorSenha,
                       validator: Validatorless.multiple([
                         Validatorless.min(6,
@@ -199,21 +196,31 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                         Validatorless.required('Senha obrigatória.'),
                       ]),
                       decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        }, 
+                        icon: Icon(
+                          _obscureText? Icons.visibility: 
+                          Icons.visibility_off, 
+                          color: Colors.green,
+                        ),
+                      ),
                         labelText: 'Senha',
                         labelStyle: context.textStyles.textRegular
                             .copyWith(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.white, width: 1.35),
+                              BorderSide(color: Color(0xFF757575), width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.greenAccent, width: 1.35),
+                              color: ColorsApp.i.primary, width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
                       ),
                     ),
                   ),
@@ -224,26 +231,36 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: TextFormField(
-                      obscureText: true,
+                      obscureText: _obscureText,
                       controller: _controladorConfirmarSenha,
                       validator: Validatorless.compare(
                           _controladorSenha, 'As senhas devem ser iguais.'),
                       decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        }, 
+                        icon: Icon(
+                          _obscureText? Icons.visibility: 
+                          Icons.visibility_off, 
+                          color: Colors.green,
+                        ),
+                      ),
                         labelText: 'Confirmar senha',
                         labelStyle: context.textStyles.textRegular
                             .copyWith(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.white, width: 1.35),
+                              BorderSide(color: Color(0xFF757575), width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.greenAccent, width: 1.35),
+                              color: ColorsApp.i.primary, width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
                       ),
                     ),
                   ),
@@ -256,7 +273,7 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                     children: [
                       Checkbox(
                         value: acceptTerms,
-                        activeColor: Colors.greenAccent,
+                        activeColor: ColorsApp.i.primary,
                         onChanged: (bool? checked) {
                           setState(() {
                             acceptTerms = checked!;
@@ -266,14 +283,14 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                       Text(
                         'Eu li e concordo com os',
                         style: context.textStyles.textRegular
-                            .copyWith(fontSize: 14, color: Colors.black),
+                            .copyWith(fontSize: 14),
                       ),
                       GestureDetector(
                         onTap: termsAndConditions,
                         child: Text(
                           ' Termos e Condições.',
                           style: context.textStyles.textBold
-                              .copyWith(fontSize: 14, color: Colors.green),
+                              .copyWith(fontSize: 14, color: ColorsApp.i.secondary),
                         ),
                       ),
                     ],
@@ -308,7 +325,7 @@ class _RegisterPageState extends State<RegisterPage> with MessageError{
                         child: Text(
                           ' Faça seu login!',
                           style: context.textStyles.textBold
-                              .copyWith(fontSize: 14, color: Colors.green),
+                              .copyWith(fontSize: 14, color: ColorsApp.i.secondary),
                         ),
                       )
                     ],

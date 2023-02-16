@@ -3,7 +3,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:login_page_pmsf/app/helpers/message_error.dart';
+import 'package:login_page_pmsf/app/helpers/messages.dart';
 import 'package:login_page_pmsf/app/pages/forgot_password/forgot_password_page.dart';
 import 'package:login_page_pmsf/app/pages/register/register_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
@@ -21,8 +21,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with MessageError{
-
+class _LoginPageState extends State<LoginPage> with Messages{
+  bool _obscureText = true;
   final _controladorEmail = TextEditingController();
   final _controladorSenha = TextEditingController();
 
@@ -99,8 +99,8 @@ class _LoginPageState extends State<LoginPage> with MessageError{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(  
-      backgroundColor: Colors.grey[300],
+    return Scaffold(    
+      // backgroundColor: Colors.grey[200],
       body: Center(
         child: SingleChildScrollView(
           reverse: true,
@@ -144,43 +144,54 @@ class _LoginPageState extends State<LoginPage> with MessageError{
                         labelText: 'E-mail',
                         labelStyle: context.textStyles.textRegular.copyWith(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 1.35),
+                          borderSide: BorderSide(color: Color(0xFF757575), width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.greenAccent, width: 1.35),
+                              BorderSide(color: ColorsApp.i.primary, width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
                       ),
                     ),
                   ),
+
                 // campo para digitar a senha
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
                   child: TextField(
-                    obscureText: true,
+                    obscureText: _obscureText,
                     controller: _controladorSenha,
                     decoration: InputDecoration(
                       prefixIcon: Icon(
-                          Icons.lock,
+                        Icons.lock,
+                        color: ColorsApp.i.secondary,
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        }, 
+                        icon: Icon(
+                          _obscureText? Icons.visibility: 
+                          Icons.visibility_off, 
                           color: ColorsApp.i.secondary,
                         ),
+                      ),
                       labelText: 'Senha',
                       labelStyle: context.textStyles.textRegular.copyWith(color: Colors.grey[600]),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 1.35),
+                        borderSide: BorderSide(color: Color(0xFF757575), width: 1.35),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.greenAccent, width: 1.35),
+                        borderSide: BorderSide(
+                          color: ColorsApp.i.primary, 
+                          width: 1.35
+                        ),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      fillColor: Colors.grey[200],
-                      filled: true,
                     ),
                   ),
                 ),
@@ -192,11 +203,11 @@ class _LoginPageState extends State<LoginPage> with MessageError{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                          onTap: forgotPasswordRoute,
-                          child: Text(
-                            'Esqueceu a sua senha?',
-                            style: context.textStyles.textBold.copyWith(color: Colors.green)
-                          )
+                        onTap: forgotPasswordRoute,
+                        child: Text(
+                          'Esqueceu a sua senha?',
+                          style: context.textStyles.textBold.copyWith(color: ColorsApp.i.secondary)
+                        )
                       ),
                     ],
                   ),
@@ -204,14 +215,14 @@ class _LoginPageState extends State<LoginPage> with MessageError{
             
                 // botão entrar
                 Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: AppButton(
-                          onPressed: singIn,
-                          label: 'Entrar',
-                          width: 370,
-                          height: 50,
-                        ),
-                      ),
+                  padding: const EdgeInsets.all(20.0),
+                  child: AppButton(
+                    onPressed: singIn,
+                    label: 'Entrar',
+                    width: 370,
+                    height: 50,
+                  ),
+                ),
             
                 // botão registrar
                 Row(
@@ -227,17 +238,20 @@ class _LoginPageState extends State<LoginPage> with MessageError{
                       onTap: () => {
                         routeTransitionSignUp(widget.showRegisterPage)
                       },
-                      child: Text(' Crie uma conta!',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          )),
+                      child: Text(
+                        ' Crie uma conta!',
+                        style: TextStyle(
+                          color: ColorsApp.i.secondary,
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
                     ),
                   ],
                 )
-              ]),
+              ]
             ),
-          ),
-      );
+        ),
+      ),
+    );
   }
 }

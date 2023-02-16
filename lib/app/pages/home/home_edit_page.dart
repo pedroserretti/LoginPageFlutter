@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_page_pmsf/app/helpers/firestore_helper.dart';
+import 'package:login_page_pmsf/app/helpers/messages.dart';
+import 'package:login_page_pmsf/app/ui/styles/colors_app.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import '../../models/user_model.dart';
 import '../../ui/widgets/app_button.dart';
@@ -12,7 +14,7 @@ class HomeEditPage extends StatefulWidget {
   State<HomeEditPage> createState() => _HomeEditPageState();
 }
 
-class _HomeEditPageState extends State<HomeEditPage> {
+class _HomeEditPageState extends State<HomeEditPage> with Messages{
   TextEditingController? _controladorNome;
   TextEditingController? _controladorEmail;
   TextEditingController? _controladorSenha;
@@ -38,14 +40,20 @@ class _HomeEditPageState extends State<HomeEditPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
           toolbarHeight: 70,
-          title: const Text('Editar Usuário'),
+          title: Text(
+            'Editar Usuário',
+          style: context.textStyles.textBold.copyWith(color: Colors.white),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: ColorsApp.i.primary,
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(45),
-                  bottomRight: Radius.circular(45))),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(45),
+              bottomRight: Radius.circular(45)
+              )
+            ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8),
@@ -60,16 +68,14 @@ class _HomeEditPageState extends State<HomeEditPage> {
                   .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                      const BorderSide(color: Colors.white, width: 1.35),
+                      const BorderSide(color: Color(0xFF757575), width: 1.35),
                       borderRadius: BorderRadius.circular(15),
                   ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Colors.greenAccent, width: 1.35),
+                      borderSide: BorderSide(
+                          color: ColorsApp.i.primary, width: 1.35),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    fillColor: Colors.grey[200],
-                    filled: true,
                   ),
                 ),
               ),
@@ -83,16 +89,14 @@ class _HomeEditPageState extends State<HomeEditPage> {
                       .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.white, width: 1.35),
+                        const BorderSide(color: Color(0xFF757575), width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                        BorderSide(color: ColorsApp.i.primary, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  fillColor: Colors.grey[200],
-                  filled: true,
                 ),
               ),
             ),
@@ -107,16 +111,14 @@ class _HomeEditPageState extends State<HomeEditPage> {
                       .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.white, width: 1.35),
+                        const BorderSide(color: Color(0xFF757575), width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.greenAccent, width: 1.35),
+                        BorderSide(color: ColorsApp.i.primary, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  fillColor: Colors.grey[200],
-                  filled: true,
                 ),
               ),
             ),
@@ -124,8 +126,14 @@ class _HomeEditPageState extends State<HomeEditPage> {
               padding: const EdgeInsets.all(20.0), 
               child: AppButton(
                 onPressed: () {
-                  FirestoreHelper.update(UserModel(id: widget.user.id, name: _controladorNome!.text, email: _controladorEmail!.text, password: _controladorSenha!.text)).then((value) {
-                    Navigator.pop(context);
+                  FirestoreHelper.update(
+                    UserModel(
+                      id: widget.user.id, 
+                      name: _controladorNome!.text, 
+                      email: _controladorEmail!.text, 
+                      password: _controladorSenha!.text)).then((value) {
+                        Navigator.pop(context);
+                        showSuccess('Usuário editado com sucesso');
                   });
                 },
                 label: 'Atualizar',

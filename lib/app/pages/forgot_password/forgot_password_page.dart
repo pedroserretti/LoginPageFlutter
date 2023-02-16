@@ -2,12 +2,13 @@
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login_page_pmsf/app/helpers/message_error.dart';
+import 'package:login_page_pmsf/app/helpers/messages.dart';
 import 'package:login_page_pmsf/app/helpers/size_extensions.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 
 
 
+import '../../ui/styles/colors_app.dart';
 import '../../ui/widgets/app_button.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class ForgotPasswordPage extends StatefulWidget {
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageError{
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> with Messages{
   final GlobalKey<FormState> _formKey = GlobalKey();
   final _controladorEsqueceuSenha = TextEditingController();
 
@@ -53,12 +54,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageErr
     return Scaffold(
       appBar: AppBar(
             toolbarHeight: 70,
-            title: const Text('Página Inicial'),
+            elevation: 0,
+            title: Text(
+              'Recupere a sua senha',
+              style: context.textStyles.textBold.copyWith(color: Colors.white),
+            ),
             centerTitle: true,
-            backgroundColor: Colors.greenAccent,
+            backgroundColor: ColorsApp.i.primary,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
             ),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -88,7 +96,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageErr
                             .copyWith(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.white, width: 1.35),
+                              BorderSide(color: Color(0xFF757575), width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -96,13 +104,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with MessageErr
                               color: Colors.greenAccent, width: 1.35),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
                       ),
                     ),
                   ),
 
-                  // design do botão
+                  // botão
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: AppButton(

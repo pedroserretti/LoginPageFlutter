@@ -3,7 +3,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 
-mixin MessageError<T extends StatefulWidget> on State<T> {
+mixin Messages<T extends StatefulWidget> on State<T> {
 
   void showError(String message){
     showTopSnackBar(

@@ -1,17 +1,16 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page_pmsf/app/helpers/firestore_helper.dart';
-import 'package:login_page_pmsf/app/helpers/message_error.dart';
+import 'package:login_page_pmsf/app/helpers/messages.dart';
 import 'package:login_page_pmsf/app/models/user_model.dart';
 import 'package:login_page_pmsf/app/pages/home/home_edit_page.dart';
 import 'package:login_page_pmsf/app/pages/login/login_page.dart';
 import 'package:login_page_pmsf/app/ui/styles/colors_app.dart';
 import 'package:login_page_pmsf/app/ui/styles/text_styles.dart';
 import 'package:validatorless/validatorless.dart';
-
 import '../../ui/widgets/app_button.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required Null Function() showLoginPage})
@@ -21,7 +20,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with MessageError{
+class _HomePageState extends State<HomePage> with Messages{
   final _formKey = GlobalKey<FormState>();
   final _controladorNome = TextEditingController();
   final _controladorEmail = TextEditingController();
@@ -42,6 +41,41 @@ class _HomePageState extends State<HomePage> with MessageError{
     ));
   }
 
+  Future<void> signUpHomePage() async {
+    try {
+      var formValid = _formKey.currentState?.validate() ?? false;
+
+      if (formValid) {
+        await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _controladorEmail.text.trim(),
+            password: _controladorSenha.text.trim())
+          .then((UserCredential userCredential) {
+            userCredential.user!.updateDisplayName(_controladorNome.text);
+
+            FirestoreHelper.create(UserModel(
+              name: _controladorNome.text.trim(),
+              email: _controladorEmail.text.trim(),
+              password: _controladorSenha.text.trim(),
+              )
+            );
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(showLoginPage: () {}),
+              ),
+              (route) => false);
+            showSuccess('Cadastro realizado com sucesso, bem vindo!');
+          }
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        showError('E-mail já está sendo utilizado por outro usuário');
+      }
+    }
+  }
+
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
@@ -51,13 +85,20 @@ class _HomePageState extends State<HomePage> with MessageError{
         key: _formKey,
         child: Scaffold(
           appBar: AppBar(
+            elevation: 0,
             toolbarHeight: 70,
-            title: const Text('Página Inicial'),
+            title: Text(
+              'Página Inicial',
+              style: context.textStyles.textBold.copyWith(color: Colors.white),
+            ),
             centerTitle: true,
-            backgroundColor: Colors.greenAccent,
+            backgroundColor: ColorsApp.i.primary,
             leading: IconButton(
               onPressed: signOut,
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(
+                Icons.arrow_back, 
+                color: Colors.white,
+              ),
             ),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -78,16 +119,14 @@ class _HomePageState extends State<HomePage> with MessageError{
                       .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.white, width: 1.35),
+                        const BorderSide(color: Color(0xFF757575), width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        color: Colors.greenAccent, width: 1.35),
+                    borderSide: BorderSide(
+                        color: ColorsApp.i.primary, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  fillColor: Colors.grey[200],
-                  filled: true,
                 ),
               ),
             ),
@@ -105,16 +144,14 @@ class _HomePageState extends State<HomePage> with MessageError{
                       .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.white, width: 1.35),
+                        const BorderSide(color: Color(0xFF757575), width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        color: Colors.greenAccent, width: 1.35),
+                    borderSide: BorderSide(
+                        color: ColorsApp.i.primary, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  fillColor: Colors.grey[200],
-                  filled: true,
                 ),
               ),
             ),
@@ -134,51 +171,21 @@ class _HomePageState extends State<HomePage> with MessageError{
                       .copyWith(color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: Colors.white, width: 1.35),
+                        const BorderSide(color: Color(0xFF757575), width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        color: Colors.greenAccent, width: 1.35),
+                    borderSide: BorderSide(
+                        color: ColorsApp.i.primary, width: 1.35),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  fillColor: Colors.grey[200],
-                  filled: true,
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: AppButton(
-                onPressed: () {
-                  try {
-                    var formValid = _formKey.currentState?.validate() ?? false;
-  
-                    if (formValid) {
-                      FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: _controladorEmail.text.trim(),
-                        password: _controladorSenha.text.trim())
-                        .then((UserCredential userCredential) {
-                          userCredential.user!.updateDisplayName(_controladorNome.text);
-  
-                          FirestoreHelper.create(
-                            UserModel(
-                              name: _controladorNome.text.trim(),
-                              email: _controladorEmail.text.trim(),
-                              password: _controladorSenha.text.trim(),
-                            ),
-                          );
-                        }
-                      );
-                      
-                    }
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'email-already-in-use') {
-                      showError('E-mail já está em uso');
-                    }
-                  }
-                  showSuccess('Usuário cadastrado com sucesso!');
-                },
+                onPressed: signUpHomePage,
                 label: 'Cadastrar',
                 width: 120,
                 height: 50,
@@ -188,48 +195,47 @@ class _HomePageState extends State<HomePage> with MessageError{
             StreamBuilder<List<UserModel>>(
                 stream: FirestoreHelper.read(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasData) {
-                    final userData = snapshot.data;
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: userData!.length,
-                        itemBuilder: (context, index) {
-                          final singleUser = userData[index];
-                          return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 5),
-                              child: ListTile(
-                                onLongPress: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: const Text('Deletar'),
-                                          content: const Text(
-                                              'Você tem certeza que deseja deletar o usuário?'),
-                                          actions: [
-                                              AppButton(
-                                                label: 'Deletar',
-                                                  onPressed: () {
-                                                    FirestoreHelper.delete(singleUser)
-                                                      .then((value) => {
-                                                        Navigator.pop(context)
-                                                      }
-                                                    );
-                                                  }
-                                              )
-                                          ],
-                                        );
-                                      }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasData) {
+                  final userData = snapshot.data;
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: userData!.length,
+                      itemBuilder: (context, index) {
+                        final singleUser = userData[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          child: ListTile(
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                 return AlertDialog(
+                                  title: const Text('Deletar'),
+                                  content: const Text(
+                                    'Você tem certeza que deseja deletar o usuário?'),
+                                    actions: [
+                                      AppButton(
+                                        label: 'Deletar',
+                                        onPressed: () {
+                                            FirestoreHelper.delete(singleUser).then((value) => {
+                                              Navigator.pop(context)
+                                            }
+                                          );
+                                        }
+                                      )
+                                    ],
                                   );
-                                },
+                                }
+                              );
+                            },
                                 leading: Container(
                                   width: 40,
                                   height: 40,
